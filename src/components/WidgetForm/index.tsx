@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CloseButton } from '../CloseButton';
-import { FeedbackTypeStep } from './Steps/FeedbackTypStep';
+import { FeedbackTypeStep } from './Steps/FeedbackTypeStep';
+import { FeedbackContentStep } from './Steps/FeedbackContentStep';
 
 import bugImageUrl from '../../assets/bug.svg';
 import ideaImageUrl from '../../assets/idea.svg';
@@ -37,20 +38,19 @@ export type FeedbackType = keyof typeof feedbackTypes;
 export function WidgetForm(){
   const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null)
 
+  const handleRestartFeedback = () => {
+    setFeedbackType(null);
+  }
+
   return(
     <div className={styles.widgetForm}>
-      <header>
-        <span className={styles.titleFeedck}>
-          Deixe seu feedback
-        </span>
-
-      <CloseButton />
-      </header>
-
       {!feedbackType ? (
         <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
       ) : (
-        <p> ola mundo!</p>
+        <FeedbackContentStep
+          feedbackType={feedbackType} 
+          onFeedbackRestartRequested={handleRestartFeedback}
+        />
       )}
 
       <footer className={styles.footerWidgetForm}>

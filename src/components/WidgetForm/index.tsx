@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CloseButton } from '../CloseButton';
 import { FeedbackTypeStep } from './Steps/FeedbackTypeStep';
 import { FeedbackContentStep } from './Steps/FeedbackContentStep';
 
@@ -7,6 +6,7 @@ import bugImageUrl from '../../assets/bug.svg';
 import ideaImageUrl from '../../assets/idea.svg';
 import thougthImageUrl from '../../assets/thought.svg';
 import styles from './styles.module.css';
+import { FeedbackSuccessStep } from './Steps/FeedbackSuccessStep';
 
 
 export const feedbackTypes = {
@@ -35,30 +35,38 @@ export const feedbackTypes = {
 
 export type FeedbackType = keyof typeof feedbackTypes;
 
-export function WidgetForm(){
+export function WidgetForm() {
   const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null)
+  const [feedbackSend, setFeedbackSend] = useState(false);
 
   const handleRestartFeedback = () => {
+    setFeedbackSend(false);
     setFeedbackType(null);
   }
 
-  return(
+  return (
     <div className={styles.widgetForm}>
-      {!feedbackType ? (
-        <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+      {feedbackSend ? (
+        <FeedbackSuccessStep onFeedbackRestartRequested={handleRestartFeedback} />
       ) : (
-        <FeedbackContentStep
-          feedbackType={feedbackType} 
-          onFeedbackRestartRequested={handleRestartFeedback}
-        />
+        <>
+          {!feedbackType ? (
+            <FeedbackTypeStep onFeedbackTypeChanged={setFeedbackType} />
+          ) : (
+            <FeedbackContentStep
+              feedbackType={feedbackType}
+              onFeedbackRestartRequested={handleRestartFeedback}
+              onFeedbackSend={() => setFeedbackSend(true)}
+            />
+          )}
+        </>
       )}
-
-      <footer className={styles.footerWidgetForm}>
+      < footer className={styles.footerWidgetForm}>
         {'Feito com ♥ pela '}
         <a className={styles.siteRocket} href="https://rocketseat.com.br">
           Rocketseat
         </a>
       </footer>
-    </div>
+    </div >
   )
 }

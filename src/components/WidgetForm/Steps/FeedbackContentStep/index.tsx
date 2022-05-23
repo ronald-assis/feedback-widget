@@ -6,19 +6,32 @@ import { ScheenshotButton } from '../../ScreenshotButton';
 
 import styles from '../../styles.module.css';
 import stylesContentStep from './styles.module.css';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 interface FeedbackContentStepProps {
   feedbackType: FeedbackType;
   onFeedbackRestartRequested: () => void;
+  onFeedbackSend: () => void;
 }
 
 export function FeedbackContentStep({
   feedbackType,
   onFeedbackRestartRequested,
+  onFeedbackSend,
 }: FeedbackContentStepProps) {
   const feedbackTypeInfo = feedbackTypes[feedbackType];
   const [screenshot, setScreenshot] = useState<string | null>(null);
+  const [comment, setComment] = useState('');
+
+  const handleSubmitFeedback = (event: FormEvent) => {
+    event.preventDefault();
+    console.log(
+      screenshot,
+      comment,
+    );
+
+    onFeedbackSend();
+  };
 
   return (
     <>
@@ -38,9 +51,10 @@ export function FeedbackContentStep({
         <CloseButton />
       </header>
 
-      <form className="my-4 w-full">
+      <form className="my-4 w-full" onSubmit={handleSubmitFeedback}>
         <textarea
           className={stylesContentStep.textareaContentStep}
+          onChange={({ target }) => setComment(target.value)}
           placeholder='Conte com detalhes o que esta acontecendo...'
         />
 
@@ -51,6 +65,7 @@ export function FeedbackContentStep({
           />
           <button
             type='submit'
+            disabled={comment.length === 0}
             className={`${stylesContentStep.sendButton} bg-brand-500`}
           >
             Enviar feedback
